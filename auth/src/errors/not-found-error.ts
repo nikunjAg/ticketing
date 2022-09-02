@@ -5,6 +5,8 @@ export class NotFoundError extends CustomError {
 
   constructor() {
     super("404 Not Found: NotFoundError");
+
+    Object.setPrototypeOf(this, NotFoundError.prototype);
   }
 
   serializeError(): ResponseError {
