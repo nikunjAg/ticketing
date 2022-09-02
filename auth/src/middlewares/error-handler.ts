@@ -11,7 +11,7 @@ export const errorHandler = (
 
   if (err instanceof CustomError) {
     const responseErr: ResponseError = err.serializeError();
-    res.status(err.statusCode).json(responseErr);
+    return res.status(err.statusCode).json(responseErr);
   }
 
   const responseError = new ResponseError();
@@ -21,5 +21,4 @@ export const errorHandler = (
   };
 
   res.status(responseError.status).json(responseError);
-
 };
