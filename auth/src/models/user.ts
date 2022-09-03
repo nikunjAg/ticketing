@@ -1,4 +1,5 @@
 import mongoose, {HydratedDocument} from "mongoose";
+import { Password } from '../utils';
 
 // An Interface used to describe the properties
 // required to create a user
@@ -7,20 +8,18 @@ interface UserAttrs {
   password: string;
 };
 
+// type representing the user document created
+type UserDoc = HydratedDocument<UserAttrs>;
+
 // An interface used to describe what properties
 // a User model can have
-interface UserModel extends mongoose.Model<UserDoc> {
+interface UserModel extends mongoose.Model<UserAttrs> {
   build(attrs: UserAttrs): UserDoc;
 };
 
-// An interface that describe the properties
-// that a User Document has 
-interface UserDoc extends mongoose.Document {
-  email: string;
-  password: string;
-};
 
-const userSchema = new mongoose.Schema<UserAttrs>({
+// Mongoose User Schema
+const userSchema = new mongoose.Schema<UserAttrs, UserModel>({
 	email: {
     type: String,
     required: true
@@ -31,15 +30,27 @@ const userSchema = new mongoose.Schema<UserAttrs>({
   }
 });
 
+// Prior to save
+userSchema.pre('save', async function(done) {
+  // Will be true first time
+  if (this.isModified('password')) {
+    const hashedPassword = await Password.toHash(this.get('password'));
+    this.set('password', hashedPassword);
+  }
+  done();
+});
+
+// static methods on User model
 userSchema.statics.build = (attrs: UserAttrs): UserDoc => {
   return new User(attrs);
 };
 
-const User = mongoose.model<UserDoc, UserModel>('User', userSchema);
+// Mongoose User Model
+const User: UserModel = mongoose.model<UserAttrs, UserModel>('User', userSchema);
 
 const user = User.build({
-  email: 'test@test.com',
-  password: "1231"
+  email: "21",
+  password: "12",
 });
 
 export { User };

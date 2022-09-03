@@ -1,7 +1,8 @@
 import express from 'express';
 import { body, validationResult } from 'express-validator';
 
-import { RequestValidationError, DatabaseConnectionError } from '../errors';
+import { RequestValidationError, BadRequestError } from '../errors';
+import { User } from '../models';
 
 const router = express.Router();
 
@@ -16,7 +17,7 @@ router.post(
       .isLength({ min: 4, max: 20 })
       .withMessage('Password length must be between 4 and 20 charachters')
   ],
-  (
+  async (
     req: express.Request,
     res: express.Response,
     next: express.NextFunction
@@ -29,13 +30,17 @@ router.post(
 
     const { email, password } = req.body;
 
-    console.log("Creating user with creds: ", email, password);
-    throw new DatabaseConnectionError();
+    const existingUser = await User.findOne({ email });
 
-    res.status(201).json({
-      status: 201,
-      message: "User created successfully"
-    });
+    // If User already exists with same email
+    if (existingUser) {
+      throw new BadRequestError("Email already in use");
+    }
+    
+    const user = User.build({ email, password });
+    const savedUser = await user.save();
+    
+    res.status(201).json({ message: 'User created successfully', savedUser });
   }
 );
 
