@@ -1,6 +1,7 @@
 import express from "express";
 import { json } from 'body-parser';
 import mongoose from "mongoose";
+import cookieSession from "cookie-session";
 import 'express-async-errors';
 
 import {
@@ -17,7 +18,13 @@ const PORT = 3000;
 const DB_NAME = 'auth';
 const DB_URL = `mongodb://auth-mongo-srv:27017/${DB_NAME}`;
 
+app.set('trust proxy', true);
 app.use(json());
+app.use(cookieSession({
+  signed: false,
+  secure: true,
+}));
+
 app.use(currentUserRouter);
 app.use(signupRouter);
 app.use(signinRouter);

@@ -28,6 +28,15 @@ const userSchema = new mongoose.Schema<UserAttrs, UserModel>({
     type: String,
     required: true
   }
+}, {
+  toJSON: {
+    transform: (doc, ret) => {
+      ret.id = ret._id;
+      delete ret._id;
+      delete ret.password;
+    },
+    versionKey: false
+  }
 });
 
 // Prior to save
@@ -47,10 +56,5 @@ userSchema.statics.build = (attrs: UserAttrs): UserDoc => {
 
 // Mongoose User Model
 const User: UserModel = mongoose.model<UserAttrs, UserModel>('User', userSchema);
-
-const user = User.build({
-  email: "21",
-  password: "12",
-});
 
 export { User };

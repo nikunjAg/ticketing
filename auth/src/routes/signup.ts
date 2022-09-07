@@ -1,4 +1,5 @@
 import express from 'express';
+import jwt from 'jsonwebtoken';
 import { body, validationResult } from 'express-validator';
 
 import { RequestValidationError, BadRequestError } from '../errors';
@@ -39,8 +40,8 @@ router.post(
     
     const user = User.build({ email, password });
     const savedUser = await user.save();
-    
-    res.status(201).json({ message: 'User created successfully', savedUser });
+
+    res.status(201).json(savedUser);
   }
 );
 
