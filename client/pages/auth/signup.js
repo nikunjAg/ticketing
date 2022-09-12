@@ -1,10 +1,17 @@
 import { useState } from "react";
-import axios from "axios";
+import Router from 'next/router';
 
+import { useRequest } from "../../hooks/use-request";
 
 const signup = () => {
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
+	
+	const [errors, sendRequest] = useRequest({
+		url: "/api/users/signup",
+		method: "POST",
+		body: { email, password },
+	});
 
   const emailChangeHandler = (e) => {
     setEmail(e.target.value);
@@ -15,47 +22,45 @@ const signup = () => {
   }
 
   const submitFormHandler = async (e) => {
-    e.preventDefault();
-    console.log(email, password);
+		e.preventDefault();
+				
+		const response = await sendRequest();
 
-    try {
-      const response = await axios.post("http://auth-srv:3000/api/users/signup", {
-        email,
-        password,
-      });
-      console.log(response.data);
-    } catch(err) {
-      console.log(err);
-    }
+		if (response && response.status === 201) {
+			Router.push('/');
+		}
   }
 
 	return (
-		<form onSubmit={submitFormHandler} >
-			<h1>Signup</h1>
-			<div className="form-group">
-				<label>Email</label>
-				<input
-					type="email"
-					placeholder="Enter email address"
-					className="form-control"
-					value={email}
-					onChange={emailChangeHandler}
-				/>
-			</div>
-			<div className="form-group">
-				<label>Password</label>
-				<input
-					type="password"
-					placeholder="Enter password"
-					className="form-control"
-					value={password}
-					onChange={passwordChangeHandler}
-				/>
-			</div>
-			<button type="submit" className="btn btn-primary">
-				Submit
-			</button>
-		</form>
+		<div className="container">
+			<form onSubmit={submitFormHandler}>
+				{errors}
+				<h1>Signup</h1>
+				<div className="form-group mb-3">
+					<label>Email</label>
+					<input
+						type="email"
+						placeholder="Enter email address"
+						className="form-control"
+						value={email}
+						onChange={emailChangeHandler}
+					/>
+				</div>
+				<div className="form-group mb-3">
+					<label>Password</label>
+					<input
+						type="password"
+						placeholder="Enter password"
+						className="form-control"
+						value={password}
+						onChange={passwordChangeHandler}
+					/>
+				</div>
+				<button type="submit" className="btn btn-primary">
+					Submit
+				</button>
+			</form>
+		</div>
 	);
 };
 
