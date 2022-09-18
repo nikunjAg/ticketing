@@ -1,29 +1,27 @@
-import axios from "axios";
+import React from 'react';
+
+import {buildClient} from '../api/build-client';
 
 const Home = ({currentUser}) => {
-  console.log(currentUser);
-  return <h1>Home Page</h1>
+  return currentUser ? <h1>Welcome Back</h1> : <h1>Home Page</h1>
 };
 
-Home.getInitialProps = async ({req}) => {
+Home.getInitialProps = async (ctx) => {
 
-  let requestURL = '/api/users/currentuser';
-  
-  // if getInitialProps is executing on server
-  if (typeof window === 'undefined') {
-    console.log('Executing on the server!!!');
-    requestURL = `http://ingress-nginx-controller.ingress-nginx.svc.cluster.local${requestURL}`;
+  const client = buildClient(ctx);
+  let response = {};
+
+  try {
+    const { data } = await client.get('/api/users/currentuser');
+    response = {
+      ...data,
+    };
+  } catch(err) {
+    console.log(err);
+    response = {...err.response?.data};
   }
 
-  const { data } = await axios.get(
-    requestURL,
-    {
-      headers: req.headers,
-    }
-  );
-  console.log('On Server', data);
-  return data;
+  return response;
 };
-
 
 export default Home;

@@ -7,7 +7,7 @@ export const useRequest = (requestConfig) => {
   const sendRequest = useCallback(async () => {
     setErrors(null);
     try {
-      const response = await axios({ url: requestConfig.url, method: requestConfig.method, data: requestConfig.body, params: requestConfig.params });
+      const response = await axios({ url: requestConfig.url, method: requestConfig.method || "GET", data: requestConfig.body, params: requestConfig.params });
       return response;
     } catch(err) {
       console.log(err);
