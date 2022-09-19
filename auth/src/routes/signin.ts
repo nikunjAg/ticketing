@@ -1,9 +1,8 @@
 import express, { Request, Response, NextFunction } from 'express';
 import { body } from 'express-validator';
 import jwt from 'jsonwebtoken';
-import { BadRequestError } from '../errors';
+import { BadRequestError, validateRequest, } from '@nagticketing/common';
 
-import { validateRequest } from '../middlewares';
 import { User } from '../models';
 import { Password } from '../utils';
 

@@ -1,10 +1,9 @@
 import express from 'express';
 import jwt from 'jsonwebtoken';
 import { body } from 'express-validator';
+import { BadRequestError, validateRequest, } from '@nagticketing/common';
 
-import { BadRequestError } from '../errors';
 import { User } from '../models';
-import { validateRequest } from '../middlewares';
 
 const router = express.Router();
 

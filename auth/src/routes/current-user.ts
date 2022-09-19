@@ -1,7 +1,6 @@
 import express from 'express';
-import jwt from 'jsonwebtoken';
+import { currentUser, requireAuth, } from '@nagticketing/common';
 
-import { currentUser, requireAuth } from '../middlewares';
 
 const router = express.Router();
 
