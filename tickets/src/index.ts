@@ -2,16 +2,11 @@ import express from "express";
 import { json } from 'body-parser';
 import mongoose from "mongoose";
 import cookieSession from "cookie-session";
+import { NotFoundError, errorHandler, currentUser, } from '@nagticketing/common';
 import 'express-async-errors';
 
-import {
-  currentUserRouter,
-  signupRouter,
-  signinRouter,
-  signoutRouter
-} from './routes';
-import { NotFoundError } from './errors';
-import { errorHandler } from './middlewares';
+import { createTicketRouter } from './routes';
+
 
 const app = express();
 const PORT = 3000;
@@ -23,10 +18,8 @@ app.use(cookieSession({
   secure: true,
 }));
 
-app.use(currentUserRouter);
-app.use(signupRouter);
-app.use(signinRouter);
-app.use(signoutRouter);
+app.use(currentUser);
+app.use(createTicketRouter);
 
 app.all('*', async () => {
   throw new NotFoundError();
@@ -41,7 +34,6 @@ const start = async () => {
     throw new Error("MONGO_URI is not defined");
 
   try {
-
     await mongoose.connect(process.env.MONGO_URI);
     console.log('Connected to MongoDB');
   } catch(err) {
@@ -49,7 +41,7 @@ const start = async () => {
   }
 
   app.listen(PORT, () => {
-    console.log(`Auth service started on port ${PORT}`);
+    console.log(`Tickets service started on port ${PORT}`);
   });
 };
 
