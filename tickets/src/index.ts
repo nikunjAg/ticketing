@@ -5,7 +5,7 @@ import cookieSession from "cookie-session";
 import { NotFoundError, errorHandler, currentUser, } from '@nagticketing/common';
 import 'express-async-errors';
 
-import { createTicketRouter } from './routes';
+import { createTicketRouter, showTicketRouter, updateTicketRouter } from './routes';
 
 
 const app = express();
@@ -19,7 +19,10 @@ app.use(cookieSession({
 }));
 
 app.use(currentUser);
+
+app.use(showTicketRouter);
 app.use(createTicketRouter);
+app.use(updateTicketRouter);
 
 app.all('*', async () => {
   throw new NotFoundError();
