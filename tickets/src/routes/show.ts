@@ -6,7 +6,7 @@ import { Ticket } from '../model';
 const router = express.Router();
 
 router.get(
-  '/api/tickets/:id',
+  '/api/tickets/:id?',
   async (req: Request, res: Response) => {
     const { id: ticketId } = req.params;
     
