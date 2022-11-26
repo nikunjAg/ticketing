@@ -3,6 +3,8 @@ import { body, } from 'express-validator';
 import { requireAuth, validateRequest, NotFoundError, NotAuthorizedError } from '@nagticketing/common';
 
 import { Ticket } from '../model';
+import { natsWrapper } from '../nats-wrapper';
+import { TickerUpdatedPublisher } from '../events/publishers/ticket-updated-publisher';
 
 const router = express.Router();
 
@@ -43,6 +45,14 @@ router.put(
 
     // Saving the changes to database
     await ticket.save();
+
+    // publish the event
+    new TickerUpdatedPublisher(natsWrapper.client).publish({
+      id: ticket.id,
+      title: ticket.title,
+      price: ticket.price,
+      userId: ticket.userId.toString()
+    });
 
     res
       .status(200)

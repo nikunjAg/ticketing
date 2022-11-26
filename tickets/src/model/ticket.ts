@@ -15,11 +15,11 @@ interface TicketAttrs {
 
 type TicketDoc = HydratedDocument<TicketAttrs>;
 
-interface TicketModel extends mongoose.Model<TicketDoc> {
+interface TicketModel extends mongoose.Model<TicketAttrs> {
   build(attrs: InputTicketAttrs): TicketDoc 
 };
 
-const schema = new Schema<TicketDoc, TicketModel>({
+const schema = new Schema<TicketAttrs, TicketModel>({
   title: {
     type: String,
     required: true
@@ -43,8 +43,6 @@ const schema = new Schema<TicketDoc, TicketModel>({
   }
 });
 
-const Ticket: TicketModel = mongoose.model<TicketDoc, TicketModel>('Ticket', schema);
-
 schema.statics.build = (attrs: InputTicketAttrs): TicketDoc => {
   // Getting input ticket attrs,
   // converting them to ticket attrs
@@ -58,5 +56,6 @@ schema.statics.build = (attrs: InputTicketAttrs): TicketDoc => {
   return new Ticket(ticketAttrs);
 };
 
+const Ticket: TicketModel = mongoose.model<TicketAttrs, TicketModel>('Ticket', schema);
 
 export { Ticket };
