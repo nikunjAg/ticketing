@@ -7,6 +7,8 @@ import 'express-async-errors';
 
 import { showOrdersRouter, createOrdersRouter, deleteOrdersRouter } from './routes';
 import { natsWrapper } from './nats-wrapper';
+import { TicketCreatedListener } from "./events/listeners/ticket-created-listener";
+import { TicketUpdatedListener } from "./events/listeners/ticket-updated-listener";
 
 const app = express();
 const PORT = 3000;
@@ -54,9 +56,12 @@ const start = async () => {
 
     process.on('SIGINT', natsWrapper.client.close);
     process.on('SIGTERM', natsWrapper.client.close);
-
+    
     await mongoose.connect(process.env.MONGO_URI);
     console.log('Connected to MongoDB');
+    
+    new TicketCreatedListener(natsWrapper.client).listen();
+    new TicketUpdatedListener(natsWrapper.client).listen();
   } catch(err) {
     console.error(err);
   }

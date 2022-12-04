@@ -6,7 +6,7 @@ import { Order } from '../model/order';
 const router = express.Router();
 
 router.get(
-  '/api/orders:id?',
+  '/api/orders/:id?',
   requireAuth,
   async (req: Request, res: Response) => {
   
