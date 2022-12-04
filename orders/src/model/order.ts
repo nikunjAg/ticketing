@@ -32,7 +32,7 @@ const ordersSchema = new Schema<OrderAttrs, OrderModel>({
   ticket: {
     type: Schema.Types.ObjectId,
     required: true,
-    ref: 'Ticket'
+    ref: 'ticket'
   },
   expiresAt: {
     type: Schema.Types.Date,

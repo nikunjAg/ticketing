@@ -2,11 +2,13 @@ import mongoose, { Schema, Types, HydratedDocument } from 'mongoose';
 import { Order, OrderStatus } from './order';
 
 interface InputTicketAttrs {
+  id?: string;
   title: string;
   price: number;
 };
 
 interface TicketAttrs {
+  _id?: Types.ObjectId;
   title: string;
   price: number;
 };
@@ -42,6 +44,7 @@ const ticketSchema = new Schema<TicketAttrs, TicketModel, TicketMethods>({
 
 ticketSchema.statics.build = (attrs: InputTicketAttrs): TicketDoc => {
   const ticketAttrs: TicketAttrs = {
+    _id: new Types.ObjectId(attrs.id),
     title: attrs.title,
     price: attrs.price
   };
