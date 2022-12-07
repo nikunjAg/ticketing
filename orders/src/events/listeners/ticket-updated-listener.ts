@@ -16,11 +16,8 @@ export class TicketUpdatedListener extends Listener<TicketUpdatedEvent> {
   
   async onMessage(data: TicketUpdatedEvent['data'], msg: Message): Promise<void> {
     const { id, title, price, __v } = data;
+    const ticket = await Ticket.findByIdAndOldVersion(data)
     
-    const ticket = await Ticket.findOne({
-      _id: id,
-      __v: __v - 1,
-    });
     if (!ticket) {
       throw new Error('Ticket not found or Received events out of order.');
     }

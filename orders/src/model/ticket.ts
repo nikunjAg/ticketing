@@ -20,7 +20,8 @@ interface TicketMethods {
 type TicketDoc = HydratedDocument<TicketAttrs, TicketMethods>;
 
 interface TicketModel extends mongoose.Model<TicketAttrs, {}, TicketMethods> {
-  build(attrs: InputTicketAttrs): TicketDoc
+  build(attrs: InputTicketAttrs): TicketDoc,
+  findByIdAndOldVersion(event: {id: string; __v: number;}): Promise<TicketDoc | null>,
 }
 
 const ticketSchema = new Schema<TicketAttrs, TicketModel, TicketMethods>({
@@ -43,6 +44,11 @@ const ticketSchema = new Schema<TicketAttrs, TicketModel, TicketMethods>({
     },
   }
 });
+
+ticketSchema.statics.findByIdAndOldVersion = async (event: {id: string; __v: number}): 
+Promise<TicketDoc | null> => {
+  return await Ticket.findOne({ _id: event.id, __v: event.__v - 1 });
+};
 
 ticketSchema.statics.build = (attrs: InputTicketAttrs): TicketDoc => {
   const ticketAttrs: TicketAttrs = {
