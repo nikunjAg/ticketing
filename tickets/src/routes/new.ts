@@ -32,7 +32,8 @@ router.post(
       id: ticket.id,
       title: ticket.title,
       price: ticket.price,
-      userId: ticket.userId.toString()
+      userId: ticket.userId.toString(),
+      __v: ticket.__v,
     });
 
     res

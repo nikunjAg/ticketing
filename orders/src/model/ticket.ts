@@ -34,6 +34,8 @@ const ticketSchema = new Schema<TicketAttrs, TicketModel, TicketMethods>({
     min: 0
   },
 }, {
+  timestamps: true,
+  optimisticConcurrency: true,
   toJSON: {
     transform(doc, ret) {
       ret.id = ret._id;

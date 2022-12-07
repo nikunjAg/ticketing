@@ -44,6 +44,8 @@ const ordersSchema = new Schema<OrderAttrs, OrderModel>({
     default: OrderStatus.CREATED
   }
 }, {
+  timestamps: true,
+  optimisticConcurrency: true,
   toJSON: {
     transform(doc, ret) {
       ret.id = ret._id;
