@@ -26,12 +26,13 @@ router.delete(
 
     new OrderCancelledPublisher(natsWrapper.client).publish({
       id: order.id,
+      __v: order.__v,
       status: order.status,
       userId: order.userId.toString(),
       ticket: {
         id: order.ticket.id,
         price: order.ticket.price,
-      }
+      },
     });
 
     res.status(204).send({
