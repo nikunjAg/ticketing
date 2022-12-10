@@ -15,7 +15,7 @@ export class TicketUpdatedListener extends Listener<TicketUpdatedEvent> {
   }
   
   async onMessage(data: TicketUpdatedEvent['data'], msg: Message): Promise<void> {
-    const { id, title, price, __v } = data;
+    const { title, price, __v} = data;
     const ticket = await Ticket.findByIdAndOldVersion(data)
     
     if (!ticket) {
@@ -23,12 +23,10 @@ export class TicketUpdatedListener extends Listener<TicketUpdatedEvent> {
     }
     
     // Update ticket & save
-    ticket.set({ title, price });
+    ticket.set({ title, price, __v });
     await ticket.save();
 
     msg.ack();
   }
   
 }
-
-// new TicketCreatedListener(natsWrapper)

@@ -36,7 +36,6 @@ const ticketSchema = new Schema<TicketAttrs, TicketModel, TicketMethods>({
   },
 }, {
   timestamps: true,
-  optimisticConcurrency: true,
   toJSON: {
     transform(doc, ret) {
       ret.id = ret._id;
@@ -69,6 +68,16 @@ ticketSchema.methods.isReserved = async function(): Promise<boolean> {
 
   return !!reservedOrder;
 };
+
+ticketSchema.pre('save', function(done) {
+  if (!this.isNew) {
+    this.$where = {
+      __v: this.get('__v') - 1,
+    }
+  }
+
+  done();
+});
 
 
 const Ticket: TicketModel = mongoose.model<TicketAttrs, TicketModel>('ticket', ticketSchema);
