@@ -10,7 +10,8 @@ interface InputTicketAttrs {
 interface TicketAttrs {
   title: string;
   price: number;
-  userId: Types.ObjectId;
+  userId: string;
+  orderId?: string;
 };
 
 type TicketDoc = HydratedDocument<TicketAttrs>;
@@ -29,9 +30,12 @@ const schema = new Schema<TicketAttrs, TicketModel>({
     required: true
   },
   userId: {
-    type: Schema.Types.ObjectId,
+    type: String,
     required: true
   },
+  orderId: {
+    type: String,
+  }
 }, {
   timestamps: true,
   optimisticConcurrency: true,
@@ -51,7 +55,7 @@ schema.statics.build = (attrs: InputTicketAttrs): TicketDoc => {
   const ticketAttrs: TicketAttrs = {
     title: attrs.title,
     price: attrs.price,
-    userId: new Types.ObjectId(attrs.userId)
+    userId: attrs.userId,
   };
 
   return new Ticket(ticketAttrs);

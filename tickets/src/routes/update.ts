@@ -1,6 +1,6 @@
 import express, { Request, Response, } from 'express';
 import { body, } from 'express-validator';
-import { requireAuth, validateRequest, NotFoundError, NotAuthorizedError } from '@nagticketing/common';
+import { requireAuth, validateRequest, NotFoundError, NotAuthorizedError, BadRequestError } from '@nagticketing/common';
 
 import { Ticket } from '../model';
 import { natsWrapper } from '../nats-wrapper';
@@ -37,6 +37,11 @@ router.put(
       throw new NotAuthorizedError();
     }
 
+    // If the ticket is already reserved, cancel update
+    if (ticket.orderId) {
+      throw new BadRequestError("Cannot update an ordered ticket.");
+    }
+
     // Updating the properties of document
     ticket.set({
       title,
@@ -47,13 +52,13 @@ router.put(
     await ticket.save();
 
     // publish the event
-    new TickerUpdatedPublisher(natsWrapper.client).publish({
-      id: ticket.id,
-      title: ticket.title,
-      price: ticket.price,
-      userId: ticket.userId.toString(),
-      __v: ticket.__v
-    });
+      new TickerUpdatedPublisher(natsWrapper.client).publish({
+        id: ticket.id,
+        title: ticket.title,
+        price: ticket.price,
+        userId: ticket.userId.toString(),
+        __v: ticket.__v
+      });
 
     res
       .status(200)

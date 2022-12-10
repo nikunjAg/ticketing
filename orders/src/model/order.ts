@@ -12,7 +12,7 @@ interface InputOrderAttrs {
 
 
 interface OrderAttrs {
-  userId: Types.ObjectId;
+  userId: string;
   ticket: TicketDoc;
   expiresAt: Date;
   status: OrderStatus;
@@ -26,7 +26,7 @@ interface OrderModel extends mongoose.Model<OrderAttrs> {
 
 const ordersSchema = new Schema<OrderAttrs, OrderModel>({
   userId: {
-    type: Schema.Types.ObjectId,
+    type: String,
     required: true
   },
   ticket: {
@@ -56,7 +56,7 @@ const ordersSchema = new Schema<OrderAttrs, OrderModel>({
 
 ordersSchema.statics.build = (attrs: InputOrderAttrs): OrderDoc => {
   const orderAttrs: OrderAttrs = {
-    userId: new Types.ObjectId(attrs.userId),
+    userId: attrs.userId,
     ticket: attrs.ticket,
     expiresAt: attrs.expiresAt,
     status: attrs.status
