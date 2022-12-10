@@ -48,10 +48,13 @@ router.put(
       price
     })
 
+    const isUpdated = ticket.isModified();
+
     // Saving the changes to database
     await ticket.save();
 
     // publish the event
+    if (isUpdated) {
       new TickerUpdatedPublisher(natsWrapper.client).publish({
         id: ticket.id,
         title: ticket.title,
@@ -59,6 +62,7 @@ router.put(
         userId: ticket.userId.toString(),
         __v: ticket.__v
       });
+    }
 
     res
       .status(200)

@@ -21,19 +21,21 @@ router.delete(
     } 
 
     order.status = OrderStatus.CANCELLED;
-
+    const isUpdated = order.isModified();
     await order.save();
 
-    new OrderCancelledPublisher(natsWrapper.client).publish({
-      id: order.id,
-      __v: order.__v,
-      status: order.status,
-      userId: order.userId.toString(),
-      ticket: {
-        id: order.ticket.id,
-        price: order.ticket.price,
-      },
-    });
+    if (isUpdated) {
+      new OrderCancelledPublisher(natsWrapper.client).publish({
+        id: order.id,
+        __v: order.__v,
+        status: order.status,
+        userId: order.userId.toString(),
+        ticket: {
+          id: order.ticket.id,
+          price: order.ticket.price,
+        },
+      });
+    }
 
     res.status(204).send({
       message: 'Order cancelled successfully',
