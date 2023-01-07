@@ -1,5 +1,8 @@
 import Queue from "bull";
 
+import { OrderExpiredPublisher } from "../events/publisher/order-expired-publisher";
+import { natsWrapper } from "../nats-wrapper";
+
 interface JobPayload {
   orderId: string;
 };
@@ -11,12 +14,15 @@ const expirationQueue = new Queue<JobPayload>('order:expiration', {
   }
 });
 
-expirationQueue.process(async function(job, done) {
+expirationQueue.process(async function(job) {
   console.log(
-		"I am processing expiration:complete event for orderId",
+		"Expiration:completed for orderId:",
 		job.data.orderId
   );
-  done();
+
+  new OrderExpiredPublisher(natsWrapper.client).publish({
+    id: job.data.orderId,
+  });
 });
 
 expirationQueue.on('completed', job => {
@@ -28,7 +34,10 @@ expirationQueue.on('active', (job) => {
 });
 
 expirationQueue.on('error', (job) => {
-  console.log(`Job with id ${job.stack} has been error`);
+  console.log(`Job with id ${job.stack} has been error`, job.stack);
+});
+expirationQueue.on('failed', (job) => {
+  console.log(`Job with id ${job.id} has been error`, job.failedReason);
 });
 
 export { expirationQueue };
