@@ -21,17 +21,21 @@ export class OrderCancelledListener extends Listener<OrderCancelledEvent> {
 
     ticket.set({ orderId: undefined });
     
+    const isModified = ticket.isModified();
+
     await ticket.save();
     
-    new TickerUpdatedPublisher(this.client)
-      .publish({
-        id: ticket.id,
-        __v: ticket.__v,
-        title: ticket.title,
-        price: ticket.price,
-        userId: ticket.userId,
-        orderId: ticket.orderId,
-      });
+    if (isModified) {
+      new TickerUpdatedPublisher(this.client)
+        .publish({
+          id: ticket.id,
+          __v: ticket.__v,
+          title: ticket.title,
+          price: ticket.price,
+          userId: ticket.userId,
+          orderId: ticket.orderId,
+        });
+    }
 
     msg.ack();
   }

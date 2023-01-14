@@ -21,19 +21,23 @@ export class OrderExpiredListener extends Listener<OrderExpiredEvent> {
 
     order.set('status', OrderStatus.CANCELLED);
 
+    const isModified = order.isModified();
+
     await order.save();
 
-    new OrderCancelledPublisher(this.client)
-      .publish({
-        id: order.id,
-        __v: order.__v,
-        status: order.status,
-        userId: order.userId,
-        ticket: {
-          id: order.ticket.id,
-          price: order.ticket.price,
-        },
-      });
+    if (isModified) {
+      new OrderCancelledPublisher(this.client)
+        .publish({
+          id: order.id,
+          __v: order.__v,
+          status: order.status,
+          userId: order.userId,
+          ticket: {
+            id: order.ticket.id,
+            price: order.ticket.price,
+          },
+        });
+    }
 
     msg.ack();
 

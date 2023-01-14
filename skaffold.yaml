@@ -40,6 +40,14 @@ build:
         manual:
           - src: 'src/**/*.ts'
             dest: .
+    - image: nikunjag/payments
+      context: payments
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: 'src/**/*.ts'
+            dest: .
     - image: nikunjag/client
       context: client
       docker:
@@ -48,4 +56,3 @@ build:
         manual:
           - src: '**/*.js'
             dest: .
-
