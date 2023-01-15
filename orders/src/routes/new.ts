@@ -62,7 +62,8 @@ router.post(
       userId: order.userId.toString(),
       ticket: {
         id: ticket.id,
-        price: ticket.price
+        price: ticket.price,
+        title: ticket.title,
       },
     });
 
