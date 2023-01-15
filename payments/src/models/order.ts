@@ -1,12 +1,18 @@
 import mongoose, { HydratedDocument, Schema, Types } from 'mongoose';
 import { OrderStatus } from '@nagticketing/common';
 
+interface TicketAttrs {
+  id: string;
+  price: number;
+  title: string
+};
+
 interface InputOrderAttrs {
   id?: string;
   status: OrderStatus;
   __v: number;
   userId: string;
-  price: number;
+  tickets: TicketAttrs[]
 };
 
 interface OrderAttrs {
@@ -14,7 +20,7 @@ interface OrderAttrs {
   status: OrderStatus;
   __v: number;
   userId: Types.ObjectId;
-  price: number;
+  tickets: TicketAttrs[]
 };
 
 type OrderDoc = HydratedDocument<OrderAttrs>;
@@ -23,6 +29,17 @@ interface OrderModel extends mongoose.Model<OrderAttrs> {
   build(attrs: InputOrderAttrs): OrderDoc;
   findByIdAndOldVersion(event: { id: string; __v: number }): Promise<OrderDoc | null>;
 };
+
+const ticketSchema = new Schema<TicketAttrs> ({
+  price: {
+    type: Number,
+    required: true,
+  },
+  title: {
+    type: String,
+    required: true
+  }
+});
 
 const orderSchema = new Schema<OrderAttrs, OrderModel>({
   status: {
@@ -34,9 +51,17 @@ const orderSchema = new Schema<OrderAttrs, OrderModel>({
     type: Schema.Types.ObjectId,
     required: true,
   },
-  price: {
-    type: Number,
-    required: true
+  tickets: {
+    type: [ticketSchema],
+    required: true,
+    validate: {
+      validator: function(v: TicketAttrs[]) {
+        return v.length > 0;
+      },
+      message: function(props) {
+        return `${props.path} cannot be empty.`
+      }
+    }
   }
 }, {
   timestamps: true,
@@ -57,7 +82,7 @@ orderSchema.statics.build = (attrs: InputOrderAttrs): OrderDoc => {
     status: attrs.status,
     __v: attrs.__v,
     userId: new Types.ObjectId(attrs.userId),
-    price: attrs.price
+    tickets: []
   };
 
   return new Order(orderAttrs);

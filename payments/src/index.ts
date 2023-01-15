@@ -8,6 +8,8 @@ import 'express-async-errors';
 import { natsWrapper } from './nats-wrapper';
 import { OrderCreatedListener } from './events/listeners/order-created-listener';
 import { OrderCancelledListener } from './events/listeners/order-cancelled-listener';
+import { createChargeRouter } from './routes/new';
+import { paymentsEventsRouter } from './routes/payment-updates';
 
 const app = express();
 const PORT = 3000;
@@ -21,6 +23,8 @@ app.use(cookieSession({
 
 app.use(currentUser);
 
+app.use(createChargeRouter);
+app.use(paymentsEventsRouter);
 
 app.all('*', async () => {
   throw new NotFoundError();

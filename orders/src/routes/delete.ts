@@ -33,6 +33,7 @@ router.delete(
         ticket: {
           id: order.ticket.id,
           price: order.ticket.price,
+          title: order.ticket.title,
         },
       });
     }
