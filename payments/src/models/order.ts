@@ -1,7 +1,7 @@
 import mongoose, { HydratedDocument, Schema, Types } from 'mongoose';
 import { OrderStatus } from '@nagticketing/common';
 
-interface TicketAttrs {
+interface InputTicketAttrs {
   id: string;
   price: number;
   title: string
@@ -12,15 +12,21 @@ interface InputOrderAttrs {
   status: OrderStatus;
   __v: number;
   userId: string;
-  tickets: TicketAttrs[]
+  ticket: InputTicketAttrs
 };
+
+interface TicketAttrs {
+  id: Types.ObjectId;
+  price: number;
+  title: string;
+}
 
 interface OrderAttrs {
   _id?: Types.ObjectId;
   status: OrderStatus;
   __v: number;
   userId: Types.ObjectId;
-  tickets: TicketAttrs[]
+  ticket: TicketAttrs
 };
 
 type OrderDoc = HydratedDocument<OrderAttrs>;
@@ -51,17 +57,9 @@ const orderSchema = new Schema<OrderAttrs, OrderModel>({
     type: Schema.Types.ObjectId,
     required: true,
   },
-  tickets: {
-    type: [ticketSchema],
+  ticket: {
+    type: ticketSchema,
     required: true,
-    validate: {
-      validator: function(v: TicketAttrs[]) {
-        return v.length > 0;
-      },
-      message: function(props) {
-        return `${props.path} cannot be empty.`
-      }
-    }
   }
 }, {
   timestamps: true,
@@ -82,7 +80,12 @@ orderSchema.statics.build = (attrs: InputOrderAttrs): OrderDoc => {
     status: attrs.status,
     __v: attrs.__v,
     userId: new Types.ObjectId(attrs.userId),
-    tickets: []
+    ticket: {
+      id: new Types.ObjectId(attrs.ticket.id),
+      title: attrs.ticket.title,
+      price: attrs.ticket.price,
+      
+    }
   };
 
   return new Order(orderAttrs);
@@ -112,4 +115,4 @@ orderSchema.pre('save', function(done){
 
 const Order: OrderModel = mongoose.model<OrderAttrs, OrderModel>('order', orderSchema);
 
-export { Order };
+export { Order, OrderDoc };
