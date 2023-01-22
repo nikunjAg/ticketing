@@ -10,6 +10,7 @@ import { natsWrapper } from './nats-wrapper';
 import { TicketCreatedListener } from "./events/listeners/ticket-created-listener";
 import { TicketUpdatedListener } from "./events/listeners/ticket-updated-listener";
 import { OrderExpiredListener } from "./events/listeners/order-expired-listener";
+import { PaymentCreatedListener } from "./events/listeners/payment-created-listener";
 
 const app = express();
 const PORT = 3000;
@@ -64,6 +65,7 @@ const start = async () => {
     new TicketCreatedListener(natsWrapper.client).listen();
     new TicketUpdatedListener(natsWrapper.client).listen();
     new OrderExpiredListener(natsWrapper.client).listen();
+    new PaymentCreatedListener(natsWrapper.client).listen();
   } catch(err) {
     console.error(err);
   }
