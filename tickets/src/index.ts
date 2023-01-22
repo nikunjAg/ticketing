@@ -9,6 +9,7 @@ import { createTicketRouter, showTicketRouter, updateTicketRouter } from './rout
 import { natsWrapper } from './nats-wrapper';
 import { OrderCreatedListener } from './events/listeners/order-created-listener';
 import { OrderCancelledListener } from './events/listeners/order-cancelled-listener';
+import { OrderCompleteListener } from './events/listeners/order-complete-listener';
 
 const app = express();
 const PORT = 3000;
@@ -61,6 +62,7 @@ const start = async () => {
 
     new OrderCreatedListener(natsWrapper.client).listen();
     new OrderCancelledListener(natsWrapper.client).listen();
+    new OrderCompleteListener(natsWrapper.client).listen();
 
     console.log('Connected to MongoDB');
   } catch(err) {

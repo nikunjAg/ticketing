@@ -1,5 +1,5 @@
 import mongoose, { HydratedDocument, Types, Schema, } from "mongoose";
-
+import { OrderStatus } from "@nagticketing/common";
 
 interface InputTicketAttrs {
   title: string;
@@ -7,11 +7,16 @@ interface InputTicketAttrs {
   userId: string;
 };
 
+interface OrderAttrs {
+  id: string;
+  status: OrderStatus;
+}
+
 interface TicketAttrs {
   title: string;
   price: number;
-  userId: string;
-  orderId?: string;
+  userId: Types.ObjectId;
+  order?: OrderAttrs;
 };
 
 type TicketDoc = HydratedDocument<TicketAttrs>;
@@ -30,11 +35,15 @@ const schema = new Schema<TicketAttrs, TicketModel>({
     required: true
   },
   userId: {
-    type: String,
+    type: Schema.Types.ObjectId,
     required: true
   },
-  orderId: {
-    type: String,
+  order: {
+    id: String,
+    status: {
+      type: String,
+      enum: Object.values(OrderStatus),
+    },
   }
 }, {
   timestamps: true,
@@ -55,7 +64,7 @@ schema.statics.build = (attrs: InputTicketAttrs): TicketDoc => {
   const ticketAttrs: TicketAttrs = {
     title: attrs.title,
     price: attrs.price,
-    userId: attrs.userId,
+    userId: new Types.ObjectId(attrs.userId),
   };
 
   return new Ticket(ticketAttrs);

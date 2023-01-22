@@ -38,7 +38,7 @@ router.put(
     }
 
     // If the ticket is already reserved, cancel update
-    if (ticket.orderId) {
+    if (ticket.order) {
       throw new BadRequestError("Cannot update an ordered ticket.");
     }
 

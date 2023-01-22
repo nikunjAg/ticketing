@@ -8,6 +8,7 @@ import 'express-async-errors';
 import { natsWrapper } from './nats-wrapper';
 import { OrderCreatedListener } from './events/listeners/order-created-listener';
 import { OrderCancelledListener } from './events/listeners/order-cancelled-listener';
+import { OrderCompleteListener } from './events/listeners/order-complete-listener';
 import { createChargeRouter } from './routes/new';
 
 const app = express();
@@ -64,6 +65,7 @@ const start = async () => {
 
     new OrderCreatedListener(natsWrapper.client).listen();
     new OrderCancelledListener(natsWrapper.client).listen();
+    new OrderCompleteListener(natsWrapper.client).listen();
 
     console.log('Connected to MongoDB');
   } catch(err) {

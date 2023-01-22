@@ -11,7 +11,7 @@ export class OrderCreatedListener extends Listener<OrderCreatedEvent> {
   queueGroupName: string = QUEUE_GROUP_NAME;
   
   async onMessage(data: OrderCreatedEvent['data'], msg: Message) {
-    const { id: orderId, ticket: { id: ticketId } } = data;
+    const { id: orderId, ticket: { id: ticketId }, status } = data;
 
     const ticket = await Ticket.findById(ticketId);
 
@@ -19,7 +19,7 @@ export class OrderCreatedListener extends Listener<OrderCreatedEvent> {
       throw new Error("Ticket not found");
     }
 
-    ticket.set({ orderId });
+    ticket.set('order', { id: orderId, status });
 
     await ticket.save();
 
@@ -29,8 +29,8 @@ export class OrderCreatedListener extends Listener<OrderCreatedEvent> {
       __v: ticket.__v,
       title: ticket.title,
       price: ticket.price,
-      userId: ticket.userId,
-      orderId: ticket.orderId,
+      userId: ticket.userId.toString(),
+      orderId: ticket.order?.id.toString(),
     });
 
     msg.ack();
