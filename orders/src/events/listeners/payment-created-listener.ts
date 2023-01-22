@@ -27,7 +27,15 @@ export class PaymentCreatedListener extends Listener<PaymentCreatedEvent> {
     if (isModified) {
       new OrderCompletePublisher(this.client)
         .publish({
-          id: order.id
+          id: order.id,
+          userId: order.userId,
+          status: order.status,
+          __v: order.__v,
+          ticket: {
+            id: order.ticket.id,
+            price: order.ticket.price,
+            title: order.ticket.title,
+          }
         });
     }
 

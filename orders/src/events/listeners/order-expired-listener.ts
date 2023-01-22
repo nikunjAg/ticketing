@@ -19,6 +19,10 @@ export class OrderExpiredListener extends Listener<OrderExpiredEvent> {
       throw new Error("No such order exists to expire");
     }
 
+    if (order.status !== OrderStatus.CREATED) {
+      return msg.ack();
+    }
+
     order.set('status', OrderStatus.CANCELLED);
 
     const isModified = order.isModified();
