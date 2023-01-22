@@ -1,4 +1,4 @@
-import express from "express";
+import express, { Request, Response, NextFunction, Errback } from "express";
 import { json } from 'body-parser';
 import mongoose from "mongoose";
 import cookieSession from "cookie-session";
@@ -9,7 +9,6 @@ import { natsWrapper } from './nats-wrapper';
 import { OrderCreatedListener } from './events/listeners/order-created-listener';
 import { OrderCancelledListener } from './events/listeners/order-cancelled-listener';
 import { createChargeRouter } from './routes/new';
-import { paymentsEventsRouter } from './routes/payment-updates';
 
 const app = express();
 const PORT = 3000;
@@ -24,10 +23,14 @@ app.use(cookieSession({
 app.use(currentUser);
 
 app.use(createChargeRouter);
-app.use(paymentsEventsRouter);
 
 app.all('*', async () => {
   throw new NotFoundError();
+});
+
+app.use((err: Errback, req: Request, res: Response, next: NextFunction) => {
+  console.log(err);
+  next(err);
 });
 
 app.use(errorHandler);

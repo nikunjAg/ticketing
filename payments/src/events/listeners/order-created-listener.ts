@@ -16,11 +16,11 @@ export class OrderCreatedListener extends Listener<OrderCreatedEvent> {
       status: data.status,
       __v: data.__v,
       userId: data.userId,
-      tickets: [{
+      ticket: {
         id: data.ticket.id,
         title: data.ticket.title,
         price: data.ticket.price,
-      }]
+      }
     });
 
     await order.save();
