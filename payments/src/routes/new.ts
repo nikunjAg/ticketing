@@ -56,6 +56,7 @@ router.post(
         currency: 'INR',
         description: `Payment for ticket id ${ticket.id} at price: ${ticket.price}`,
         source: token,
+        receipt_email: req.currentUser?.email,
       });
 
       const payment = Payment.build({
