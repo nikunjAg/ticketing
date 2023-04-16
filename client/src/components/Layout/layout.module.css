@@ -1,0 +1,51 @@
+.header {
+  height: 4rem;
+  padding: 0.5rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: rgb(31, 31, 134);
+  color: #fff;
+  font-weight: 600;
+}
+
+.logo {
+  font-size: 1.8rem;
+  font-weight: 900;
+}
+
+.nav {
+  display: block;
+  margin-left: auto;
+}
+
+.ul {
+  list-style-type: none;
+  display: flex;
+  align-items: center;
+}
+
+.ul > li:not(:last-of-type) {
+  margin-right: 1rem;
+}
+
+.link {
+  padding: .3rem .5rem;
+  font-size: 1rem;
+  color: #ded8d8;
+  display: inline-block;
+}
+
+.link:hover {
+  color: #fff;
+}
+
+.activeLink {
+  color: #fff;
+}
+
+.createTicketFab {
+  position: absolute;
+  right: 1rem;
+  bottom: 1rem;
+}

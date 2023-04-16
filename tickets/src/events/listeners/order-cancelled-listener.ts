@@ -19,11 +19,12 @@ export class OrderCancelledListener extends Listener<OrderCancelledEvent> {
       throw new Error("Ticket not found");
     }
 
-    ticket.set({ order: undefined });
+    ticket.set('order', undefined);
     
     const isModified = ticket.isModified();
 
-    await ticket.save();
+    const res = await ticket.save();
+    console.log(res);
     
     if (isModified) {
       new TickerUpdatedPublisher(this.client)
@@ -33,7 +34,7 @@ export class OrderCancelledListener extends Listener<OrderCancelledEvent> {
           title: ticket.title,
           price: ticket.price,
           userId: ticket.userId.toString(),
-          orderId: ticket.order?.id.toString(),
+          orderId: undefined,
         });
     }
 
