@@ -1,3 +1,8 @@
+:root {
+  --primary-color: #1f1f86;
+  --warning-color: #c32e2e;
+}
+
 * {
   box-sizing: border-box;
   padding: 0;
@@ -18,7 +23,7 @@ a {
 }
 
 .link {
-  color: blue;
+  color: var(--primary-color);
   text-decoration: none;
   display: flex;
   align-items: center;
@@ -27,6 +32,20 @@ a {
 
 .link:hover {
   text-decoration: underline;
+}
+
+.linkBtn {
+  display: inline-block;
+  text-decoration: none;
+  padding: 5px 8px;
+  border: 1px solid var(--primary-color);
+  border-radius: 4px;
+  color: var(--primary-color);
+}
+
+.btn-warning {
+  color: var(--warning-color);
+  border-color: var(--warning-color);
 }
 
 @media (prefers-color-scheme: dark) {
