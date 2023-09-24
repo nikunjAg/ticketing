@@ -1,18 +1,32 @@
-import React, { useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { Container, Button, Typography, CircularProgress } from '@mui/material';
-import { createNewOrder } from '@/lib/order';
+import { useRouter } from 'next/router';
+
+let orderedFromQueryParam = false;
 
 const TicketDetail = (props) => {
 
   const { ticket, onOrder } = props;
 
+  const router = useRouter();
   const [loading, setLoading] = useState(false);
 
-  const orderTicketHandler = async () => {
+  const orderTicketHandler = useCallback(async () => {
     setLoading(true);
     await onOrder();
     setLoading(false);
-  }
+  }, [onOrder]);
+
+  useEffect(() => {
+    if (router.isFallback || orderedFromQueryParam) return;
+    const {order: orderQuery} = router.query;
+
+    if (orderQuery === 'now' && !orderedFromQueryParam) {
+      orderedFromQueryParam = true;
+      orderTicketHandler();
+    }
+
+  }, [router, orderTicketHandler]);
 
   return (
     <Container sx={{ textAlign: "center" }}>
@@ -31,13 +45,13 @@ const TicketDetail = (props) => {
       }
       {
         ticket.order && 
-        <Button variant="outlined" sx={{marginTop: '8px'}} color='error' onClick={onOrder} disabled={loading} >
+        <Button variant="outlined" sx={{marginTop: '8px'}} color='error' disabled={loading} >
           Sold Out
         </Button>
       }
       {
         !ticket.order && 
-        <Button variant="contained" sx={{marginTop: '8px'}} onClick={onOrder} disabled={loading} >
+        <Button variant="contained" sx={{marginTop: '8px'}} onClick={orderTicketHandler} disabled={loading} >
           {loading ? <CircularProgress size={24} /> : "Order Now"}
         </Button>
       }

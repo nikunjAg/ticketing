@@ -23,5 +23,5 @@
   text-decoration: none;
   color: inherit;
   font-size: .8rem;
-  color: blue;
+  color: var(--primary-color);
 }

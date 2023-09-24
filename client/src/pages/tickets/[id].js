@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 
 import { getTicketById } from '@/lib/ticket';
 import TicketDetail from '@/components/Tickets/TicketDetail';
@@ -8,16 +8,16 @@ const Ticket = ({ ticket: ticketData, error }) => {
 
   const [ticket, setTicket] = useState(ticketData);
 
-  const updateTicketHandler = async () => {
+  const updateTicketHandler = useCallback(async () => {
     const response = await getTicketById(ticket.id);
     if (response.error) {
       console.log(response.error);
     } else {
       setTicket(response.data.ticket);
     }
-  }
+  }, [ticket.id]);
 
-  const orderTicketHandler = async () => {
+  const orderTicketHandler = useCallback(async () => {
     const response = await createNewOrder({ ticketId: ticket.id });
 
     if (response.error) {
@@ -26,7 +26,7 @@ const Ticket = ({ ticket: ticketData, error }) => {
       console.log(response.data);
       updateTicketHandler();
     }
-  }
+  }, [updateTicketHandler, ticket.id])
 
   if (error) {
     return <p>{error}</p>

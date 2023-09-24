@@ -17,7 +17,7 @@ const Layout = (props) => {
         {props.children}
         <Fab
           className={classes.createTicketFab}
-          color="primary"
+          style={{ backgroundColor: 'var(--primary-color)', color: '#fff' }}
           aria-label="add"
           onClick={() => router.push("/tickets/new")}
         >
