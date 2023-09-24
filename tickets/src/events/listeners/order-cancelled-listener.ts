@@ -23,7 +23,8 @@ export class OrderCancelledListener extends Listener<OrderCancelledEvent> {
     
     const isModified = ticket.isModified();
 
-    await ticket.save();
+    const res = await ticket.save();
+    console.log(res);
     
     if (isModified) {
       new TickerUpdatedPublisher(this.client)

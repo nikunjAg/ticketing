@@ -1,0 +1,11 @@
+.form {
+  max-width: 500px;
+  margin: 2rem auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.btn {
+  padding: .5rem;
+  font-weight: 700;
+}

@@ -1,0 +1,27 @@
+.form {
+  max-width: 500px;
+  margin: 2rem auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.btn {
+  padding: .5rem;
+  font-weight: 700;
+}
+
+.link {
+  margin-top: .5rem;
+  text-align: center;
+}
+
+.link > a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  text-decoration: none;
+  color: inherit;
+  font-size: .8rem;
+  color: blue;
+}
